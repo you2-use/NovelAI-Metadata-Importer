@@ -1,0 +1,343 @@
+[data-nai-import-host] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+[data-nai-import-host] > div,
+[data-nai-import-host] > .nai-mi-host-status {
+  grid-column: 1 / -1;
+}
+.nai-mi-open,
+.nai-mi-button {
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--foreground);
+  background: var(--card);
+  padding: 8px 12px;
+  min-height: 40px;
+}
+.nai-mi-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  padding: 8px;
+  margin: 6px 12px 6px 0;
+}
+.nai-mi-open:hover,
+.nai-mi-button:hover {
+  background: var(--accent);
+}
+.nai-mi-open:focus-visible,
+.nai-mi-button:focus-visible,
+.nai-mi-dialog input:focus-visible,
+.nai-mi-dialog textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.nai-mi-host-status {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  padding: 0 12px 10px;
+}
+.nai-mi-host-status:empty {
+  display: none;
+}
+.nai-mi-dialog {
+  box-sizing: border-box;
+  width: min(860px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  margin: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  box-shadow: 0 16px 48px color-mix(in srgb, var(--foreground) 16%, transparent);
+  overflow: auto;
+}
+.nai-mi-dialog::backdrop {
+  background: color-mix(in srgb, var(--background) 72%, transparent);
+}
+.nai-mi-dialog *,
+.nai-mi-dialog *::before,
+.nai-mi-dialog *::after {
+  box-sizing: border-box;
+}
+.nai-mi-body {
+  padding: 24px;
+}
+.nai-mi-dialog h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.nai-mi-dialog p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.nai-mi-muted {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+.nai-mi-model-select {
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+.nai-mi-drop {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+.nai-mi-file {
+  max-width: 100%;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  margin: auto;
+}
+.nai-mi-file::file-selector-button {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--secondary);
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.nai-mi-status:not(:empty) {
+  padding: 12px 0;
+}
+.nai-mi-status[data-error="true"] {
+  color: var(--destructive);
+}
+.nai-mi-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0 12px;
+}
+.nai-mi-summary > div {
+  min-width: 0;
+}
+.nai-mi-preview {
+  width: 88px;
+  height: 88px;
+  flex: 0 0 88px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: var(--secondary);
+}
+.nai-mi-note {
+  font-size: 0.8125rem;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.nai-mi-table-scroll {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+.nai-mi-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.8125rem;
+}
+.nai-mi-table th,
+.nai-mi-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 8px;
+  vertical-align: top;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.nai-mi-table thead {
+  color: var(--muted-foreground);
+}
+.nai-mi-table th:first-child,
+.nai-mi-table td:first-child {
+  width: 48px;
+}
+.nai-mi-table thead th:nth-child(2) {
+  width: 22%;
+}
+.nai-mi-table tbody th {
+  font-weight: 500;
+}
+.nai-mi-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  margin: 3px 0;
+  cursor: pointer;
+}
+.nai-mi-table textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  line-height: 1.5;
+}
+.nai-mi-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--background);
+}
+.nai-mi-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+.nai-mi-primary:hover {
+  background: var(--primary);
+  filter: brightness(0.95);
+}
+.nai-mi-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+@media (max-width: 600px) {
+  .nai-mi-dialog {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+  .nai-mi-body {
+    padding: 16px;
+  }
+  .nai-mi-footer {
+    padding: 12px 16px;
+  }
+  .nai-mi-table,
+  .nai-mi-table tbody,
+  .nai-mi-table tr {
+    display: block;
+  }
+  .nai-mi-table thead {
+    display: none;
+  }
+  .nai-mi-table tr {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nai-mi-table th,
+  .nai-mi-table td {
+    display: block;
+    width: auto !important;
+    border: 0;
+    padding: 4px 0;
+  }
+  .nai-mi-table td:first-child {
+    float: left;
+    margin-right: 8px;
+  }
+  .nai-mi-table tbody th {
+    min-height: 28px;
+    font-weight: 600;
+  }
+  .nai-mi-table td:nth-child(3) {
+    color: var(--muted-foreground);
+  }
+  .nai-mi-table td:nth-child(3)::before,
+  .nai-mi-table td:nth-child(4)::before {
+    content: attr(data-label) ": ";
+    font-size: 0.75rem;
+  }
+  .nai-mi-summary {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .nai-mi-open {
+    width: 44px;
+    min-height: 44px;
+    margin-right: 8px;
+  }
+}
+
+.nai-mi-thumbnail-option {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.nai-mi-thumbnail-option > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.nai-mi-thumbnail-toggle {
+  appearance: none;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 22px;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--secondary);
+  cursor: pointer;
+}
+.nai-mi-thumbnail-toggle::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border-radius: 50%;
+  background: var(--muted-foreground);
+}
+.nai-mi-thumbnail-toggle:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.nai-mi-thumbnail-toggle:checked::before {
+  transform: translateX(16px);
+  background: var(--primary-foreground);
+}
+.nai-mi-thumbnail-toggle:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.nai-mi-thumbnail-option:has(:disabled) {
+  cursor: default;
+}
+.nai-mi-connection-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--muted);
+  pointer-events: none;
+}
