@@ -559,7 +559,7 @@ const naiMetadata = (() => {
 })();
 
 
-/* Marinara Engine 2.5.0 full-page extension. All DOM changes are scoped and cleaned up. */
+/* Marinara Engine 2.5.2 full-page extension. All DOM changes are scoped and cleaned up. */
 (() => {
   const messages = {
     ko: {
@@ -627,7 +627,7 @@ const naiMetadata = (() => {
       changed:
         "연결 또는 설정 화면이 변경되었습니다. 현재 연결에서 가져오기를 다시 열어주세요.",
       incompatible:
-        "설정 입력 칸을 정확히 찾지 못했습니다. Marinara v2.5.0의 NovelAI 연결인지 확인하세요.",
+        "설정 입력 칸을 정확히 찾지 못했습니다. Marinara v2.5.2의 NovelAI 연결인지 확인하세요.",
       applyFailed:
         "설정 반영에 실패했습니다. 변경된 값이 있는지 확인한 뒤 다시 시도하세요.",
       rolledBack: "설정 반영에 실패해 이전 값으로 되돌렸습니다.",
@@ -698,7 +698,7 @@ const naiMetadata = (() => {
       changed:
         "The connection or editor changed. Open Import again in the current connection.",
       incompatible:
-        "Could not uniquely identify the fields. Check that this is a Marinara v2.5.0 NovelAI connection.",
+        "Could not uniquely identify the fields. Check that this is a Marinara v2.5.2 NovelAI connection.",
       applyFailed:
         "Could not apply all settings. Check the connection values before trying again.",
       rolledBack:
@@ -731,7 +731,7 @@ const naiMetadata = (() => {
     if (
       !(target instanceof HTMLInputElement) ||
       !target.matches(
-        ".mari-editor-title-input, .mari-editor-content-inner > .mari-editor-panel:first-child > input",
+        ".mari-editor-title-input, .mari-editor-content-inner > :first-child > input",
       )
     )
       return;
@@ -744,10 +744,13 @@ const naiMetadata = (() => {
   }
   function rememberConnection(event) {
     const target = event.target;
-    if (!(target instanceof Element) || target.closest("button, input, select"))
-      return;
+    if (!(target instanceof Element)) return;
     const row = target.closest("[data-connection-id]");
-    if (row) selectedConnectionId = row.dataset.connectionId || null;
+    if (!row) return;
+    const interactive = target.closest("button, input, select");
+    if (interactive && !interactive.matches(".mari-connection-model-choice"))
+      return;
+    selectedConnectionId = row.dataset.connectionId || null;
   }
   document.addEventListener("click", rememberConnection, true);
   document.addEventListener("input", rememberNameEdit, true);
@@ -817,22 +820,33 @@ const naiMetadata = (() => {
       const pending = thumbnails.get(row.dataset.connectionId);
       if (!pending) continue;
       const { path, previous } = pending;
-      const tile = row.querySelector(":scope > button > span.relative");
+      const modernTile = row.querySelector(
+        ":scope > button > span.mari-provider-icon",
+      );
+      const tile =
+        modernTile || row.querySelector(":scope > button > span.relative");
       if (!tile) continue;
       const original = tile.querySelector("img:not(.nai-mi-connection-image)");
       const overlay = tile.querySelector(".nai-mi-connection-image");
       const current = original?.getAttribute("src") || null;
       if (current === path || current !== previous) {
         overlay?.remove();
+        tile.removeAttribute("data-nai-mi-tile");
         thumbnails.delete(row.dataset.connectionId);
       } else if (overlay) {
+        if (modernTile) tile.setAttribute("data-nai-mi-tile", "");
         if (overlay.getAttribute("src") !== path) overlay.src = path;
       } else {
         const image = node("img", "nai-mi-connection-image");
         image.src = path;
         image.alt = "";
         image.draggable = false;
-        tile.insertBefore(image, tile.lastElementChild);
+        if (modernTile) {
+          tile.setAttribute("data-nai-mi-tile", "");
+          tile.append(image);
+        } else {
+          tile.insertBefore(image, tile.lastElementChild);
+        }
       }
     }
   }
@@ -891,9 +905,12 @@ const naiMetadata = (() => {
         const row = Array.from(
           document.querySelectorAll("[data-connection-id]"),
         ).find((row) => row.dataset.connectionId === identity.connectionId);
+        const tile = row?.querySelector(
+          ":scope > button > span.mari-provider-icon, :scope > button > span.relative",
+        );
         // A mobile list can return from its five-minute cache after upload.
         const previous = row
-          ? row
+          ? (tile || row)
               .querySelector("img:not(.nai-mi-connection-image)")
               ?.getAttribute("src") || null
           : thumbnails.has(identity.connectionId)
@@ -930,8 +947,51 @@ const naiMetadata = (() => {
     new Promise((resolve) =>
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
-  function modelInput(header) {
+  function setInputValue(el, value) {
+    const prototype =
+      el instanceof HTMLTextAreaElement
+        ? HTMLTextAreaElement.prototype
+        : HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(prototype, "value").set.call(
+      el,
+      String(value),
+    );
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  function readPickerModel(picker, search) {
+    const ids = new Set();
+    for (const option of picker.querySelectorAll(
+      '[data-model-option][aria-current="true"]',
+    )) {
+      const id = option.closest("[data-model-row]")?.dataset.modelId;
+      if (typeof id === "string" && id) ids.add(id);
+    }
+    if (ids.size > 1) throw new Error("incompatible");
+    if (ids.size === 1) return [...ids][0];
+    return search.value.trim() ? null : "";
+  }
+  function modelControl(header) {
     const editor = header.closest(".mari-editor-shell");
+    const pickers = Array.from(
+      editor?.querySelectorAll("[data-connection-model-picker]") || [],
+    );
+    if (pickers.length > 1) throw new Error("incompatible");
+    if (pickers.length === 1) {
+      const picker = pickers[0];
+      const search = picker.querySelector("input[data-model-search]");
+      const list = picker.querySelector("[data-model-list]");
+      if (!(search instanceof HTMLInputElement) || !list)
+        throw new Error("incompatible");
+      return {
+        kind: "picker",
+        picker,
+        search,
+        list,
+        get value() {
+          return readPickerModel(picker, search);
+        },
+      };
+    }
     const inputs = Array.from(
       editor?.querySelectorAll(".mari-editor-panel") || [],
     )
@@ -942,31 +1002,68 @@ const naiMetadata = (() => {
         Array.from(panel.querySelectorAll(":scope > div.mt-2 > input")),
       );
     if (inputs.length !== 1) throw new Error("incompatible");
-    return inputs[0];
+    return {
+      kind: "input",
+      input: inputs[0],
+      get value() {
+        return inputs[0].value;
+      },
+    };
+  }
+  function findExactModelOption(picker, modelId) {
+    const matches = Array.from(
+      picker.querySelectorAll("[data-model-row][data-model-id]"),
+    )
+      .filter((row) => row.dataset.modelId === modelId)
+      .map((row) => row.querySelector("button[data-model-option]"))
+      .filter((button) => button instanceof HTMLButtonElement);
+    return matches.length >= 1 ? matches[0] : null;
+  }
+  async function clearPickerSearch(control) {
+    if (control.kind !== "picker" || !control.search.value) return;
+    setInputValue(control.search, "");
+    for (let attempt = 0; attempt < 6; attempt++) {
+      await frame();
+      if (stopped || !control.picker.isConnected) return;
+      if (
+        !control.search.value &&
+        (attempt >= 1 ||
+          control.picker.querySelector(
+            '[data-model-option][aria-current="true"]',
+          ))
+      )
+        break;
+    }
   }
   function identify(header) {
     const editor = header.closest(".mari-editor-shell");
     const title = editor?.querySelector(".mari-editor-title-input");
-    const model = modelInput(header);
-    if (!editor || !title) throw new Error("incompatible");
+    const model = modelControl(header);
+    const modelName = model.value;
+    if (!editor || !title || modelName === null)
+      throw new Error("incompatible");
     return {
       header,
       editor,
       title,
       name: title.value,
-      modelName: model.value,
+      modelName,
       connectionId: selectedConnectionId,
     };
   }
-  function unchanged(header, identity) {
+  function editorUnchanged(header, identity) {
     if (
       stopped ||
       !header.isConnected ||
       !identity.editor.isConnected ||
       identity.title.value !== identity.name ||
-      modelInput(header).value !== identity.modelName ||
       (identity.connectionId && selectedConnectionId !== identity.connectionId)
     )
+      throw new Error("changed");
+  }
+  function unchanged(header, identity) {
+    editorUnchanged(header, identity);
+    if (modelControl(header).value !== identity.modelName)
       throw new Error("changed");
   }
   function fields(header) {
@@ -988,7 +1085,7 @@ const naiMetadata = (() => {
     if (textareas.length !== 2 || choices.length !== 2)
       throw new Error("incompatible");
     return {
-      model: modelInput(header),
+      model: modelControl(header),
       seed: one('input[type="number"][min="-1"][max="4294967295"]'),
       steps: one('input[type="number"][min="1"][max="150"]'),
       promptGuidance: one('input[type="number"][min="0"][max="30"]'),
@@ -1000,19 +1097,72 @@ const naiMetadata = (() => {
       noiseSchedule: choices[1],
     };
   }
+  async function commitPickerModel(header, identity, value) {
+    unchanged(header, identity);
+    const target = String(value).trim();
+    let control = modelControl(header);
+    if (control.kind !== "picker") throw new Error("incompatible");
+    if (!target) {
+      if (control.value === "") return;
+      throw new Error("applyFailed");
+    }
+    let option = findExactModelOption(control.picker, target);
+    if (!option) {
+      control.search.focus({ preventScroll: true });
+      setInputValue(control.search, target);
+      for (let attempt = 0; attempt < 8; attempt++) {
+        await frame();
+        editorUnchanged(header, identity);
+        control = modelControl(header);
+        if (control.kind !== "picker") throw new Error("applyFailed");
+        option = findExactModelOption(control.picker, target);
+        if (option) break;
+        const typed = control.picker.querySelector(
+          "button[data-model-use-typed]",
+        );
+        if (
+          typed instanceof HTMLButtonElement &&
+          control.search.value.trim() === target
+        ) {
+          option = typed;
+          break;
+        }
+      }
+    }
+    if (!option || option.disabled) {
+      await clearPickerSearch(control);
+      throw new Error("applyFailed");
+    }
+    option.click();
+    let settled = false;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      await frame();
+      editorUnchanged(header, identity);
+      control = modelControl(header);
+      if (control.kind !== "picker") throw new Error("applyFailed");
+      if (!control.search.value && control.value === target) {
+        settled = true;
+        break;
+      }
+    }
+    if (!settled) {
+      await clearPickerSearch(control);
+      throw new Error("applyFailed");
+    }
+    const expected = { ...identity, modelName: target };
+    unchanged(header, expected);
+    identity.modelName = target;
+  }
   async function commit(header, identity, key, value) {
     unchanged(header, identity);
-    const el = fields(header)[key];
+    const control = fields(header)[key];
+    if (key === "model" && control.kind === "picker") {
+      await commitPickerModel(header, identity, value);
+      return;
+    }
+    const el = key === "model" ? control.input : control;
     el.focus({ preventScroll: true });
-    const prototype =
-      el instanceof HTMLTextAreaElement
-        ? HTMLTextAreaElement.prototype
-        : HTMLInputElement.prototype;
-    Object.getOwnPropertyDescriptor(prototype, "value").set.call(
-      el,
-      String(value),
-    );
-    el.dispatchEvent(new Event("input", { bubbles: true }));
+    setInputValue(el, value);
     await frame();
     const expected =
       key === "model" ? { ...identity, modelName: String(value) } : identity;
@@ -1040,6 +1190,11 @@ const naiMetadata = (() => {
     state.status.textContent = "";
     let identity, controls;
     try {
+      const control = modelControl(header);
+      if (control.kind === "picker" && control.search.value) {
+        await clearPickerSearch(control);
+        if (stopped || revision !== thisRevision) return;
+      }
       identity = identify(header);
       if (
         !header.parentElement.querySelector('input[type="number"][min="-1"]')
@@ -1342,8 +1497,11 @@ const naiMetadata = (() => {
         let restored = false;
         if (snapshot && !stopped) {
           try {
-            for (const [key, value] of Object.entries(snapshot))
+            const current = fields(header);
+            for (const [key, value] of Object.entries(snapshot)) {
+              if (current[key].value === String(value)) continue;
               await commit(header, identity, key, value);
+            }
             restored = true;
           } catch {
             /* Report partial application honestly. */
@@ -1381,6 +1539,7 @@ const naiMetadata = (() => {
       )
         continue;
       if (
+        header.closest("[data-connection-model-picker]") ||
         header.parentElement.firstElementChild !== header ||
         !header.querySelector("svg")
       )
@@ -1494,6 +1653,9 @@ const naiMetadata = (() => {
     document
       .querySelectorAll(".nai-mi-connection-image")
       .forEach((image) => image.remove());
+    document
+      .querySelectorAll("[data-nai-mi-tile]")
+      .forEach((tile) => tile.removeAttribute("data-nai-mi-tile"));
     observer.disconnect();
     dismiss();
     for (const state of hosts.values()) {

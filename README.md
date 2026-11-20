@@ -2,11 +2,11 @@
 
 NovelAI로 만든 이미지에 남아 있는 생성 설정을 **Marinara Engine의 NovelAI 연결 설정으로 가져오는 확장**입니다. 이미지를 선택하면 현재 설정과 가져올 설정을 비교하고, 필요한 항목만 골라 적용할 수 있습니다.
 
-- **확장 버전:** v1.0.0
-- **대상 프로그램:** Marinara Engine v2.5.0
+- **확장 버전:** v2.0.0
+- **대상 프로그램:** Marinara Engine v2.5.2 (v2.5.0 하위 호환 포함)
 - **설치 방식:** GitHub 확장 관리자 또는 ZIP 직접 설치
 
-[v1.0.0 ZIP 다운로드](https://github.com/you2-use/NovelAI-Metadata-Importer/archive/refs/tags/v1.0.0.zip) · [릴리스 안내](https://github.com/you2-use/NovelAI-Metadata-Importer/releases/tag/v1.0.0)
+[v2.0.0 ZIP 다운로드](https://github.com/you2-use/NovelAI-Metadata-Importer/releases/download/v2.0.0/NovelAI-Metadata-Importer-v2.0.0.personal-extension.zip) · [릴리스 안내](https://github.com/you2-use/NovelAI-Metadata-Importer/releases/tag/v2.0.0)
 
 ## 어떤 기능인가요?
 
@@ -36,7 +36,7 @@ GitHub 확장 관리자가 설치되어 있고 켜져 있는 경우 사용할 �
    ```
 
 3. 설치할 패키지에서 **manifest.json**을 선택하고 **내용 확인**을 누릅니다.
-4. 확장 이름이 **NovelAI Metadata Importer**, 버전이 **v1.0.0**인지 확인합니다. 코드를 확인한 뒤 **설치**를 누릅니다.
+4. 확장 이름이 **NovelAI Metadata Importer**, 버전이 **v2.0.0**인지 확인합니다. 코드를 확인한 뒤 **설치**를 누릅니다.
 5. **검토 후 켜기**를 누르고, Marinara의 확인창에서 코드와 **전체 페이지 접근** 권한을 검토한 뒤 실행을 승인합니다.
 
 공개 저장소이므로 설치하는 사람은 GitHub에 로그인하거나 토큰을 입력할 필요가 없습니다. 이후 업데이트도 이 저장소 연결로 확인할 수 있습니다.
@@ -45,10 +45,10 @@ GitHub 확장 관리자가 설치되어 있고 켜져 있는 경우 사용할 �
 
 GitHub 확장 관리자 없이 Marinara의 기본 가져오기 기능으로 설치할 수 있습니다.
 
-1. [v1.0.0 ZIP 다운로드](https://github.com/you2-use/NovelAI-Metadata-Importer/archive/refs/tags/v1.0.0.zip)를 눌러 파일을 받습니다. 이 ZIP에는 설치에 필요한 `manifest.json`, `extension.js`, `extension.css`가 들어 있습니다. **ZIP을 미리 풀 필요는 없습니다.**
+1. [v2.0.0 ZIP 다운로드](https://github.com/you2-use/NovelAI-Metadata-Importer/releases/download/v2.0.0/NovelAI-Metadata-Importer-v2.0.0.personal-extension.zip)를 눌러 파일을 받습니다. 이 ZIP에는 설치에 필요한 `manifest.json`, `extension.js`, `extension.css`가 들어 있습니다. **ZIP을 미리 풀 필요는 없습니다.**
 2. Marinara에서 **설정 → 애드온 → 외부 확장 → 확장 파일 가져오기**를 엽니다. 영어 화면에서는 **Import Extension File**입니다.
 3. 다운로드한 `.zip` 파일을 선택합니다.
-4. 가져오기 화면에서 **NovelAI Metadata Importer** 항목과 버전을 확인하고 가져오기를 완료합니다.
+4. 가져오기 화면에서 **NovelAI Metadata Importer** 항목과 버전 **2.0.0**을 확인하고 가져오기를 완료합니다.
 5. 추가된 확장의 **검토 및 실행 / Review and run**을 열어 코드와 **전체 페이지 접근** 권한을 확인한 뒤 실행을 승인합니다.
 
 GitHub 확장 관리자가 기본 가져오기 버튼을 숨긴 경우에는 관리자의 **확장 추가 → 파일에서**로 같은 ZIP을 선택할 수 있습니다. ZIP으로 설치한 확장은 GitHub 업데이트 확인을 이용하려면 관리자에서 저장소를 별도로 연결해야 합니다.
@@ -102,7 +102,7 @@ JPEG, 움직이는 WebP, 메타데이터가 제거된 이미지, 스크린샷에
 
 ## 권한과 데이터 처리
 
-이 확장은 **전체 페이지 접근(`full_page_access`)** 권한을 요청합니다. NovelAI 연결 편집기에 버튼을 넣고 기존 입력란에 설정을 반영하기 위해 필요합니다. 전체 페이지 접근 권한은 Marinara 페이지와 현재 세션의 내부 API에 접근할 수 있는 권한이므로 코드를 확인한 뒤 승인하세요.
+이 확장은 **전체 페이지 접근(`full_page_access`)** 권한을 요청합니다. NovelAI 연결 편집기에 버튼을 넣고 기존 입력란 및 모델 선택기에 설정을 반영하기 위해 필요합니다. 전체 페이지 접근 권한은 Marinara 페이지와 현재 세션의 내부 API에 접근할 수 있는 권한이므로 코드를 확인한 뒤 승인하세요.
 
 이미지 메타데이터는 브라우저 안에서 분석하며 외부 서비스로 이미지를 보내지 않습니다. 연결을 식별하기 위해 현재 Marinara 서버의 연결 목록을 조회합니다. 썸네일 등록을 선택하면 브라우저에서 작은 PNG 썸네일을 만들어 **현재 Marinara 서버**에 저장합니다. 원본 파일은 변경하지 않으며, 썸네일에는 원본 메타데이터와 프롬프트를 포함하지 않습니다.
 
@@ -113,7 +113,6 @@ JPEG, 움직이는 WebP, 메타데이터가 제거된 이미지, 스크린샷에
 GitHub 확장 관리자로 설치했다면 해당 확장의 **업데이트 확인**에서 새 코드를 확인하고 **업데이트 설치**로 갱신할 수 있습니다. ZIP 직접 설치는 새 버전 ZIP을 받아 같은 가져오기 화면에서 기존 확장을 업데이트하세요. **Save Disabled Update**가 표시되면 비활성 상태로 업데이트를 저장하는 버튼입니다.
 
 업데이트 후에는 확장이 꺼진 상태로 저장됩니다. 새 코드를 검토하고 다시 실행을 승인하세요. 전체 페이지 확장을 갱신한 뒤 화면 상태가 남아 있으면 새로고침하세요.
-
 
 ## 문제 해결
 
@@ -127,6 +126,7 @@ GitHub 확장 관리자로 설치했다면 해당 확장의 **업데이트 확�
 | 적용한 설정이 저장되지 않아요. | 가져오기 창의 적용 후 연결 편집기의 저장 버튼도 눌렀는지 확인하세요. |
 | 입력 칸을 찾을 수 없거나 부분 적용 안내가 나와요. | 연결 편집기를 다시 열고 재시도하세요. 저장하기 전에 각 값을 확인하세요. Marinara 버전이 바뀌었다면 호환성 업데이트가 필요할 수 있습니다. |
 
+문제가 계속되면 [이슈 페이지](https://github.com/you2-use/NovelAI-Metadata-Importer/issues)에 Marinara 버전, 확장 버전, 브라우저와 오류 문구를 알려주세요.
 
 ## 파일 구성
 

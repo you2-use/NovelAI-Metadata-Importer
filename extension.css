@@ -332,6 +332,10 @@
 .nai-mi-thumbnail-option:has(:disabled) {
   cursor: default;
 }
+[data-nai-mi-tile] {
+  position: relative;
+  overflow: hidden;
+}
 .nai-mi-connection-image {
   position: absolute;
   inset: 0;

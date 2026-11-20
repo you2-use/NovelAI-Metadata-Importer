@@ -3,7 +3,7 @@
   "version": 1,
   "config": {
     "name": "NovelAI Metadata Importer",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "NovelAI PNG·WebP 메타데이터 정보를 연결 설정으로 가져옵니다.",
     "runtime": "client",
     "capabilities": [
